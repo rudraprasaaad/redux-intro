@@ -1,4 +1,4 @@
-import { createStore } from "redux";
+import { combineReducers, createStore } from "redux";
 
 const initialStateAccount = {
   balance: 0,
@@ -63,11 +63,18 @@ function customerReducer(state = initialStateCustomer, action) {
         ...state,
         fullName: action.payload,
       };
+
+    default:
+      return state;
   }
 }
 
-const accountStore = createStore(accountReducer);
-const customerStore = createStore(customerReducer);
+const rootReducer = combineReducers({
+  account: accountReducer,
+  customer: customerReducer,
+});
+
+const store = createStore(rootReducer);
 
 function deposit(amount) {
   return {
@@ -96,21 +103,14 @@ function payLoan() {
   };
 }
 
-accountStore.dispatch(deposit(500));
-// console.log(accountStore.getState());
-accountStore.dispatch(withdraw(200));
-// console.log(accountStore.getState());
+store.dispatch(deposit(500));
+store.dispatch(withdraw(200));
+store.dispatch(requestLoan(1000, "To buy a car"));
+store.dispatch(payLoan());
 
-accountStore.dispatch(requestLoan(1000, "To buy a car"));
-// console.log(accountStore.getState());
-accountStore.dispatch(payLoan());
-// console.log(accountStore.getState());
-
-customerStore.dispatch(createCustomer("Rudraprasad", "Indian"));
-console.log(customerStore.getState());
-
-customerStore.dispatch(updateName("Rudra"));
-console.log(customerStore.getState());
+store.dispatch(createCustomer("Rudraprasad", "Indian"));
+store.dispatch(updateName("Rudra"));
+console.log(store.getState());
 
 function createCustomer(fullName, nationalID) {
   return {
