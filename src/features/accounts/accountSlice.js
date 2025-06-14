@@ -13,6 +13,7 @@ export default function accountReducer(state = initialStateAccount, action) {
       };
 
     case "account/withdraw":
+      if (state.balance < action.payload) return state;
       return {
         ...state,
         balance: state.balance - action.payload,
